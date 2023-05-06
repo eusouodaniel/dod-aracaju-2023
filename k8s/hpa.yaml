@@ -1,0 +1,13 @@
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+
+metadata:
+  name: app-dod-aracaju-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    name: app-dod-aracaju
+    kind: Deployment
+  minReplicas: 2
+  maxReplicas: 30
+  targetCPUUtilizationPercentage: 25

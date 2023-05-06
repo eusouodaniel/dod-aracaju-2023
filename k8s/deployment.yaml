@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: app-dod-aracaju
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: app-dod-aracaju
+  template:
+    metadata:
+      labels:
+        app: app-dod-aracaju
+    spec:
+      affinity:
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 1
+            preference:
+              matchExpressions:
+              - key: type
+                operator: In
+                values:
+                - app-dod-aracaju
+      containers:
+        - name: app-dod-aracaju
+          image: danielrodriguess/app-dod-aracaju:v1
+          resources:
+            requests:
+              cpu: 32m
+              memory: 64Mi
+            limits:
+              cpu: 64m
+              memory: 100Mi
+          startupProbe:
+            httpGet:
+              path: /
+              port: 8080
+            periodSeconds: 10
+            failureThreshold: 10
+
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            periodSeconds: 10
+            failureThreshold: 2
+            timeoutSeconds: 5
+
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            periodSeconds: 10
+            failureThreshold: 3
+            timeoutSeconds: 5
+            successThreshold: 1
+          ports:
+          - containerPort: 8080
